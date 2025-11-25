@@ -1,8 +1,13 @@
 SELECT
 	PS.RELNAME AS TABLE_NAME,
-	PA.ATTNAME AS COLUMN_NAME,
 	PD.DESCRIPTION AS COLUMN_COMMENT,
-	concat('    /**',PD.DESCRIPTION,'*/',CHR(10),'    private String ',substr(replace(initcap(concat('1',replace(PA.ATTNAME,'_',' '))),' ',''),2),';')
+	CONCAT(UPPER(PA.ATTNAME),',') AS COLUMN_NAME,
+	concat('#{',substr(replace(initcap(concat('1',replace(PA.ATTNAME,'_',' '))),' ',''),2),'},') as Model,	
+	
+	concat('    /**',PD.DESCRIPTION,'*/',CHR(10),'    private String ',substr(replace(initcap(concat('1',replace(PA.ATTNAME,'_',' '))),' ',''),2),';') as Model,
+		
+replace(concat('A.',UPPER(PA.ATTNAME),'					AS ',
+			concat(' ',substr(replace(initcap(concat('1',replace(PA.ATTNAME,'_',' '))),' ',''),2)),',', '    /**',PD.DESCRIPTION,'**/'),'\"','') as mybatis			
 FROM PG_STAT_ALL_TABLES PS, PG_DESCRIPTION PD, PG_ATTRIBUTE PA
 WHERE PD.OBJSUBID<>0
 	AND PS.RELID=PD.OBJOID
